@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voting with emodji</title>
+    <style>
+      .emoji {
+        font-size: 2em;
+        cursor: pointer;
+        padding: 0 10px;
+      }
+      .counter {
+        text-align: center;
+        margin-top: 5px;
+      }
+      .question {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+      }
+      .emoji-container {
+        display: inline-block;
+        text-align: center;
+      }
+      .button-container {
+        margin-top: 10px;
+        text-align: left;
+      }
+
+      button {
+        margin: 10px;
+        padding: 10px;
+        border-radius: 15px;
+        background-color: rgb(236, 235, 235);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="emoji-voting">
+      <div id="question" class="question">
+        Are we going to meet for a reading club today?
+      </div>
+      <!-- Emodji will be added by js -->
+      <div class="button-container">
+        <button id="show-winner">Show Winner</button>
+      </div>
+    </div>
+
+    <script>
+      // List of emoji
+      const emojis = [
+        { emoji: "😀", description: "Absolutely!" },
+        { emoji: "😅", description: "Not sure" },
+        { emoji: "😂", description: "No way!" },
+        { emoji: "😍", description: "Definitely!" },
+        { emoji: "🤔", description: "Less likely" },
+      ];
+
+      // An object to save votes
+      const votes = {};
+
+      // Votes initialization for every emoji
+      emojis.forEach((item) => {
+        votes[item.emoji] = 0;
+      });
+
+      // Access to container for voting
+      const votingContainer = document.getElementById("emoji-voting");
+
+      // UI update
+      function updateUI() {
+        // Clear container except the question
+        votingContainer.innerHTML =
+          '<div id="question" class="question">Are we going to meet for a reading club today?</div>';
+
+        emojis.forEach((item) => {
+          // Creating a container for emoji and counter
+          const emojiContainer = document.createElement("div");
+          emojiContainer.className = "emoji-container";
+
+          // Creating element for emoji
+          const emojiSpan = document.createElement("span");
+          emojiSpan.className = "emoji";
+          emojiSpan.textContent = item.emoji;
+          emojiSpan.addEventListener("click", () => {
+            votes[item.emoji]++;
+            updateUI();
+          });
+
+          // Creating element for description of emoji
+          const descriptionDiv = document.createElement("div");
+          descriptionDiv.className = "description";
+          descriptionDiv.textContent = item.description;
+
+          // Creating element for counter
+          const counterDiv = document.createElement("div");
+          counterDiv.className = "counter";
+          counterDiv.textContent = votes[item.emoji];
+
+          // Adding emoji, description and counter to div
+          emojiContainer.appendChild(emojiSpan);
+          emojiContainer.appendChild(descriptionDiv);
+          emojiContainer.appendChild(counterDiv);
+
+          // Adding emoji container to a main div
+          votingContainer.appendChild(emojiContainer);
+        });
+
+        // Re-add the button container
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "button-container";
+        const button = document.createElement("button");
+        button.id = "show-winner";
+        button.textContent = "Show Winner";
+        button.addEventListener("click", findWinner);
+        buttonContainer.appendChild(button);
+        votingContainer.appendChild(buttonContainer);
+      }
+
+      // Function to find the emoji with the most votes
+      function findWinner() {
+        let maxVotes = 0;
+        let winner = null;
+
+        for (const emoji in votes) {
+          if (votes[emoji] > maxVotes) {
+            maxVotes = votes[emoji];
+            winner = emoji;
+          }
+        }
+
+        if (winner) {
+          alert(`The winner is ${winner} with ${maxVotes} votes!`);
+        } else {
+          alert("No votes yet!");
+        }
+      }
+
+      updateUI();
+    </script>
+  </body>
+</html>
